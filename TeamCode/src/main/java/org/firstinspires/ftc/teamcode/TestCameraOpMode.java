@@ -19,11 +19,31 @@ public class TestCameraOpMode extends OpMode
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
+    //LK add from instructions
+    Transform2d cameraToRobot = new Transform2d();
+    double encoderMeasurementCovariance = 0.1; //0.8;
+    Pose2d startingPose = new Pose2d(-63 * 0.0254, 57 * 0.0254, new Rotation2d());
+
     @Override
     public void init() {
         if (slamra == null) {
-            slamra = new T265Camera(new Transform2d(), 0.1, hardwareMap.appContext);
+            //slamra = new T265Camera(new Transform2d(), 0.1, hardwareMap.appContext);
+            slamra = new T265Camera(cameraToRobot, encoderMeasurementCovariance, hardwareMap.appContext);
+            slamra.setPose(startingPose); // Useful if your robot doesn't start at the field-relative origin
         }
+        //slamra.setPose(startingPose); // Useful if your robot doesn't start at the field-relative origin
+/*
+// This is the transformation between the center of the camera and the center of the robot
+        Transform2d cameraToRobot = new Transform2d();
+// Increase this value to trust encoder odometry less when fusing encoder measurements with VSLAM
+        double encoderMeasurementCovariance = 0.8;
+// Set to the starting pose of the robot
+        Pose2d startingPose = new Pose2d(1, 1, new Rotation2d());
+
+        T265Camera slamra = new T265Camera(cameraToRobot, encoderMeasurementCovariance, hardwareMap.appContext);
+        slamra.setPose(startingPose); // Useful if your robot doesn't start at the field-relative origin
+ */
+
     }
 
     @Override
@@ -54,6 +74,13 @@ public class TestCameraOpMode extends OpMode
         double x1 = translation.getX() + arrowX  / 2, y1 = translation.getY() + arrowY / 2;
         double x2 = translation.getX() + arrowX, y2 = translation.getY() + arrowY;
         field.strokeLine(x1, y1, x2, y2);
+
+
+        telemetry.addData ("X", translation.getX());
+        telemetry.addData ("Y", translation.getY());
+        telemetry.addData ("<", rotation.getDegrees());
+        telemetry.update();
+
 
         dashboard.sendTelemetryPacket(packet);
     }
