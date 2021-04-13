@@ -30,6 +30,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Field;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -420,8 +423,10 @@ public class Odo_Test_4_T265_log extends LinearOpMode {
         }
 // End camera stuff
 
-        int serialNum = (int)(Math.random()*10000);
-        String logFilePath = String.format("%s/FIRST/odo4_t265%d.txt", Environment.getExternalStorageDirectory().getAbsolutePath(), serialNum );
+        DateFormat df = new SimpleDateFormat("yyyyMMdd-HHmmss");
+        String dateString = df.format(new Date());
+
+        String logFilePath = String.format("%s/FIRST/odo4_t265_%s.txt", Environment.getExternalStorageDirectory().getAbsolutePath(), dateString );
         try {
             FileWriter writer = new FileWriter(logFilePath);
             fileWriter = new BufferedWriter(writer);

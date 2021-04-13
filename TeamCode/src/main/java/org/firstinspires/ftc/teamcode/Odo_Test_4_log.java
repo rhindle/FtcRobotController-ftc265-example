@@ -22,6 +22,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Field;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @TeleOp(name = "3Odo_Test_4_log", group = "")
@@ -330,14 +333,16 @@ public class Odo_Test_4_log extends LinearOpMode {
     private void initialize() {
         elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
-        String logFilePath = String.format("%s/FIRST/odo4.txt", Environment.getExternalStorageDirectory().getAbsolutePath());
+        DateFormat df = new SimpleDateFormat("yyyyMMdd-HHmmss");
+        String dateString = df.format(new Date());
+
+        String logFilePath = String.format("%s/FIRST/odo4_%s.txt", Environment.getExternalStorageDirectory().getAbsolutePath(), dateString );
         try {
             FileWriter writer = new FileWriter(logFilePath);
             fileWriter = new BufferedWriter(writer);
         } catch (IOException e) {
             throw new RuntimeException("Cannot write to file", e);
         }
-
         // Set motor directions and modes
         initMotors();
         initIMU();
