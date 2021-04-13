@@ -30,6 +30,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Field;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @TeleOp(name = "3Odo_Test_4_T265_log", group = "")
@@ -44,7 +46,7 @@ public class Odo_Test_4_T265_log extends LinearOpMode {
 
     //LK add from instructions
     //Transform2d cameraToRobot = new Transform2d();
-    Transform2d cameraToRobot = new Transform2d(new Translation2d(-2 * 0.0254, 0.0 * 0.254), new Rotation2d());
+    Transform2d cameraToRobot = new Transform2d(new Translation2d(-8 * 0.0254, 0.0 * 0.254), new Rotation2d());
 
     double encoderMeasurementCovariance = 0.1; //0.8;
     //Pose2d startingPose = new Pose2d(-63 * 0.0254, 57 * 0.0254, new Rotation2d());
@@ -62,6 +64,8 @@ public class Odo_Test_4_T265_log extends LinearOpMode {
 
     private double yPos, xPos;
     private double odoHeading, odoHeading0;
+
+    private double robotX, robotY, robotH;
 
     private double t265X, t265Y, t265Rot;
 
@@ -96,7 +100,7 @@ public class Odo_Test_4_T265_log extends LinearOpMode {
     // type, x, y, rot
     // where type 1 = accurate, 2 = transition, 3 = pause..., 4 = (not used yet), 999 = end routine
     double[][] autoScript = {
-            {1, 0, 0, 0},
+/*            {1, 0, 0, 0},
 //            {2, 10, -10, 90},
 //            {2, 20, 0, -90},
 //            {1, 36, 0, -120},
@@ -110,6 +114,24 @@ public class Odo_Test_4_T265_log extends LinearOpMode {
             {1, 24, 0, 0},
             {3, 1000},
             {1, 0, 0, 0},
+            {999}*/
+            {2, 0, 0, 0},
+            {2, 51, 0, 0},
+            {1, 60, -40, 0},
+            {3, 1000},
+            {1, 60, -48, 0},
+            {3, 1000},
+            {1, 60, -56, 0},
+            {3, 1000},
+            {1, 94, -23, 90},
+            {3, 2000},
+            {2, 62, -46, 180},
+            {1, 19, -48, 180},
+            {3, 2000},
+            {2, 60, -35, 180},
+            {1, 84, -27, 90},
+            {3, 2000},
+            {1, 74, -26, 90},
             {999}
     };
 
@@ -190,6 +212,11 @@ public class Odo_Test_4_T265_log extends LinearOpMode {
                 // -or-
                 // t265X, t265Y, t265Rot
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                robotX=t265X;
+                robotY=t265Y;
+                //robotH=t265Rot;
+                globalHeading=t265Rot;
 
                 addTelemetryLoopStart();
                 Controls();
@@ -393,7 +420,8 @@ public class Odo_Test_4_T265_log extends LinearOpMode {
         }
 // End camera stuff
 
-        String logFilePath = String.format("%s/FIRST/odo4_t265.txt", Environment.getExternalStorageDirectory().getAbsolutePath());
+        int serialNum = (int)(Math.random()*10000);
+        String logFilePath = String.format("%s/FIRST/odo4_t265%d.txt", Environment.getExternalStorageDirectory().getAbsolutePath(), serialNum );
         try {
             FileWriter writer = new FileWriter(logFilePath);
             fileWriter = new BufferedWriter(writer);
@@ -490,8 +518,8 @@ public class Odo_Test_4_T265_log extends LinearOpMode {
         v1=0;
         v2=0;
         v3=0;
-        deltaX = targetX-xPos;  // error in x
-        deltaY = targetY-yPos;  // error in y
+        deltaX = targetX-robotX;  // error in x
+        deltaY = targetY-robotY;  // error in y
         telemetry.addData("DeltaX", JavaUtil.formatNumber(deltaX, 2));
         telemetry.addData("DeltaY", JavaUtil.formatNumber(deltaY, 2));
         deltaRot = getError(targetRot);  // error in rotation
